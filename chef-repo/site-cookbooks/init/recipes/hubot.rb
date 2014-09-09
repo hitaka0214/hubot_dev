@@ -13,24 +13,16 @@ bash "install hubt and coffee-script" do
   user "vagrant"
   group "vagrant"
   code <<-EOH
-    rpm insall -g hubot coffee-script
+    sudo npm install -g hubot coffee-script
   EOH
 end
 
 ### redis
-%(redis).each do |p|
+%w(redis).each do |p|
   package p do
     options "--enablerepo=epel"
     action :install
+    not_if "rpm -qa | grep -q #{p}"
   end
-end
-
-bash "redis server up" do
-  user "root"
-  group "root"
-  code <<-EOH
-    redis-server /etc/redis.conf &
-  EOH
-  not_if "ps ax | grep -q redis-server"
 end
 
